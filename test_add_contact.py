@@ -54,15 +54,19 @@ class TestAddContact(unittest.TestCase):
         wd.find_element_by_name("email2").send_keys(contact.email2)
         wd.find_element_by_name("email3").send_keys(contact.email3)
         wd.find_element_by_name("homepage").send_keys(contact.homepage)
-        self.fill_date(contact.bdate.day, contact.bdate.month, contact.bdate.year, wd, "bday", "bmonth", "byear")
-        self.fill_date(contact.adate.day, contact.adate.month, contact.adate.year, wd, "aday", "amonth", "ayear")
+        if len(contact.bdate.day) > 0 and len(contact.bdate.month) > 0 and len(contact.bdate.year) > 0:
+            self.fill_date(contact.bdate.day, contact.bdate.month, contact.bdate.year, wd,
+                           day_locator="bday", month_locator="bmonth", year_locator="byear")
+        if len(contact.adate.day) > 0 and len(contact.adate.month) > 0 and len(contact.adate.year) > 0:
+            self.fill_date(contact.adate.day, contact.adate.month, contact.adate.year, wd,
+                           day_locator="aday", month_locator="amonth", year_locator="ayear")
         wd.find_element_by_name("address2").send_keys(contact.address2)
         wd.find_element_by_name("phone2").send_keys(contact.home_phone2)
         wd.find_element_by_name("notes").send_keys(contact.notes)
         # submit contact creation
         wd.find_element_by_name("submit").click()
 
-    def test_add_group(self):
+    def test_add_contact(self):
         wd = self.wd
         self.open_home_page(wd)
         self.login(wd, username="admin", password="secret")
@@ -72,6 +76,18 @@ class TestAddContact(unittest.TestCase):
                                         homepage="abc", bdate=Date("1", "January", "1990"),
                                         adate=Date("10", "May", "1999"), address2="abc", home_phone2="abc",
                                         notes="abc"))
+        self.return_home_page(wd)
+        self.logout(wd)
+
+    def test_add_empty_contact(self):
+        wd = self.wd
+        self.open_home_page(wd)
+        self.login(wd, username="admin", password="secret")
+        self.create_contact(wd, Contact(first_name="", middle_name="", last_name="", nickname="", title="", company="",
+                                        address="", home_phone="", mobile_phone="", work_phone="", fax="", email="",
+                                        email2="", email3="", homepage="", bdate=Date("", "", ""),
+                                        adate=Date("", "", ""), address2="", home_phone2="", notes=""))
+
         self.return_home_page(wd)
         self.logout(wd)
 
