@@ -3,6 +3,7 @@ from selenium.webdriver.firefox.webdriver import WebDriver
 from selenium.webdriver.support.ui import Select
 import unittest
 from contact import Contact
+from date import Date
 
 
 class TestAddContact(unittest.TestCase):
@@ -20,6 +21,19 @@ class TestAddContact(unittest.TestCase):
         wd.find_element_by_name("pass").clear()
         wd.find_element_by_name("pass").send_keys(password)
         wd.find_element_by_xpath("//input[@value='Login']").submit()
+
+    def fill_date(self, day, month, year, wd, day_locator, month_locator, year_locator):
+        wd.find_element_by_name(day_locator).click()
+        Select(wd.find_element_by_name(day_locator)).select_by_visible_text(day)
+        wd.find_element_by_name(month_locator).click()
+        Select(wd.find_element_by_name(month_locator)).select_by_visible_text(month)
+        wd.find_element_by_name(year_locator).send_keys(year)
+
+    def return_home_page(self, wd):
+        wd.find_element_by_link_text("home page").click()
+
+    def logout(self, wd):
+        wd.find_element_by_link_text("Logout").click()
 
     def create_contact(self, wd, contact):
         # init contact creation
@@ -40,30 +54,13 @@ class TestAddContact(unittest.TestCase):
         wd.find_element_by_name("email2").send_keys(contact.email2)
         wd.find_element_by_name("email3").send_keys(contact.email3)
         wd.find_element_by_name("homepage").send_keys(contact.homepage)
-        # fill birthday
-        wd.find_element_by_name("bday").click()
-        Select(wd.find_element_by_name("bday")).select_by_visible_text(contact.bday)
-        wd.find_element_by_name("bmonth").click()
-        Select(wd.find_element_by_name("bmonth")).select_by_visible_text(contact.bmonth)
-        wd.find_element_by_name("byear").send_keys(contact.byear)
-        # fill anniversary
-        wd.find_element_by_name("aday").click()
-        Select(wd.find_element_by_name("aday")).select_by_visible_text(contact.aday)
-        wd.find_element_by_name("amonth").click()
-        Select(wd.find_element_by_name("amonth")).select_by_visible_text(contact.amonth)
-        wd.find_element_by_name("ayear").send_keys(contact.ayear)
-        # fill secondary
+        self.fill_date(contact.bdate.day, contact.bdate.month, contact.bdate.year, wd, "bday", "bmonth", "byear")
+        self.fill_date(contact.adate.day, contact.adate.month, contact.adate.year, wd, "aday", "amonth", "ayear")
         wd.find_element_by_name("address2").send_keys(contact.address2)
         wd.find_element_by_name("phone2").send_keys(contact.home_phone2)
         wd.find_element_by_name("notes").send_keys(contact.notes)
         # submit contact creation
         wd.find_element_by_name("submit").click()
-
-    def return_home_page(self, wd):
-        wd.find_element_by_link_text("home page").click()
-
-    def logout(self, wd):
-        wd.find_element_by_link_text("Logout").click()
 
     def test_add_group(self):
         wd = self.wd
@@ -72,8 +69,9 @@ class TestAddContact(unittest.TestCase):
         self.create_contact(wd, Contact(first_name="abc", middle_name="abc", last_name="abc", nickname="abc",
                                         title="abc", company="abc", address="abc", home_phone="abc", mobile_phone="abc",
                                         work_phone="abc", fax="abc", email="abc", email2="abc", email3="abc",
-                                        homepage="abc", bday="1", bmonth="January", byear="1990", aday="1",
-                                        amonth="January", ayear="1990", address2="abc", home_phone2="abc", notes="abc"))
+                                        homepage="abc", bdate=Date("1", "January", "1990"),
+                                        adate=Date("10", "May", "1999"), address2="abc", home_phone2="abc",
+                                        notes="abc"))
         self.return_home_page(wd)
         self.logout(wd)
 
