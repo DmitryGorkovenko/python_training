@@ -2,8 +2,8 @@
 from selenium.webdriver.firefox.webdriver import WebDriver
 from selenium.webdriver.support.ui import Select
 import unittest
-from contact import Contact
-from date import Date
+from addressbook_web_tests.model.contact import Contact
+from addressbook_web_tests.model.date import Date
 import os
 from pathlib import Path
 
@@ -65,8 +65,9 @@ class TestAddContact(unittest.TestCase):
         wd.find_element_by_link_text("Logout").click()
 
     def attach(self, wd, file_name):
-        if Path(os.getcwd() + "\\"+file_name).is_file():
-            wd.find_element_by_name("photo").send_keys(os.getcwd() + "\\" + file_name)
+        path = os.getcwd() + "\\addressbook_web_tests\\resources\\" + file_name
+        if Path(path).is_file():
+            wd.find_element_by_name("photo").send_keys(path)
 
     def test_add_contact(self):
         wd = self.wd
