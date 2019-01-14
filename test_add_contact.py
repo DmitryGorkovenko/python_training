@@ -5,6 +5,7 @@ import unittest
 from contact import Contact
 from date import Date
 import os
+from pathlib import Path
 
 
 class TestAddContact(unittest.TestCase):
@@ -20,7 +21,7 @@ class TestAddContact(unittest.TestCase):
         wd.find_element_by_name("middlename").send_keys(contact.middle_name)
         wd.find_element_by_name("lastname").send_keys(contact.last_name)
         wd.find_element_by_name("nickname").send_keys(contact.nickname)
-        self.upload_photo(wd, contact.file_name)
+        self.attach(wd, contact.file_name)
         wd.find_element_by_name("title").send_keys(contact.title)
         wd.find_element_by_name("company").send_keys(contact.company)
         wd.find_element_by_name("address").send_keys(contact.address)
@@ -49,9 +50,10 @@ class TestAddContact(unittest.TestCase):
         wd.find_element_by_xpath("//input[@value='Login']").submit()
 
     def fill_date(self, wd, date, day_locator, month_locator, year_locator):
-        if len(date.day) > 0 and len(date.month) > 0:
+        if date.day:
             wd.find_element_by_name(day_locator).click()
             Select(wd.find_element_by_name(day_locator)).select_by_visible_text(date.day)
+        if date.month:
             wd.find_element_by_name(month_locator).click()
             Select(wd.find_element_by_name(month_locator)).select_by_visible_text(date.month)
         wd.find_element_by_name(year_locator).send_keys(date.year)
@@ -62,10 +64,9 @@ class TestAddContact(unittest.TestCase):
     def logout(self, wd):
         wd.find_element_by_link_text("Logout").click()
 
-    def upload_photo(self, wd, file_name):
-        if len(file_name) > 0:
-            wd.find_element_by_name("photo").click()
-            wd.find_element_by_name("photo").send_keys(os.getcwd() + "/" + file_name)
+    def attach(self, wd, file_name):
+        if Path(os.getcwd() + "\\"+file_name).is_file():
+            wd.find_element_by_name("photo").send_keys(os.getcwd() + "\\" + file_name)
 
     def test_add_contact(self):
         wd = self.wd
@@ -76,7 +77,7 @@ class TestAddContact(unittest.TestCase):
                                         work_phone="abc", fax="abc", email="abc", email2="abc", email3="abc",
                                         homepage="abc", bdate=Date("1", "January", "1990"),
                                         adate=Date("10", "May", "1999"), address2="abc", home_phone2="abc",
-                                        notes="abc", file_name="photo.png"))
+                                        notes="abc", file_name="photo.jpg"))
         self.return_home_page(wd)
         self.logout(wd)
 
@@ -86,8 +87,9 @@ class TestAddContact(unittest.TestCase):
         self.login(wd, username="admin", password="secret")
         self.create_contact(wd, Contact(first_name="", middle_name="", last_name="", nickname="", title="", company="",
                                         address="", home_phone="", mobile_phone="", work_phone="", fax="", email="",
-                                        email2="", email3="", homepage="", bdate=Date("", "", ""),
-                                        adate=Date("", "", ""), address2="", home_phone2="", notes="", file_name=""))
+                                        email2="", email3="", homepage="", bdate=Date(None, None, ""),
+                                        adate=Date(None, None, ""), address2="", home_phone2="", notes="",
+                                        file_name=""))
 
         self.return_home_page(wd)
         self.logout(wd)
