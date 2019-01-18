@@ -19,10 +19,9 @@ class Application:
 
     def type(self, locator, text):
         wd = self.wd
-        wd.find_element_by_name(locator).click()
         if text:
             existing_text = wd.find_element_by_name(locator).get_attribute("value")
-            if not text != existing_text:
+            if not text == existing_text:
                 wd.find_element_by_name(locator).clear()
                 wd.find_element_by_name(locator).send_keys(text)
 

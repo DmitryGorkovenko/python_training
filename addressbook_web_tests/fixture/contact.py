@@ -54,7 +54,7 @@ class ContactHelper:
         if value:
             existing_value = wd.find_element_by_xpath("//select[@name='" + locator + "']/option[@selected='selected']")\
                 .get_attribute("value")
-            if value != existing_value:
+            if not value == existing_value:
                 wd.find_element_by_name(locator).click()
                 Select(wd.find_element_by_name(locator)).select_by_visible_text(value)
 
