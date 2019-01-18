@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from selenium.webdriver.support.ui import Select
+from definitions import ROOT_DIR
 from pathlib import Path
-import os
 
 
 class ContactHelper:
@@ -11,45 +11,54 @@ class ContactHelper:
 
     def create(self, contact):
         wd = self.app.wd
-        # init contact creation
         wd.find_element_by_link_text("add new").click()
-        # fill contact form
-        wd.find_element_by_name("firstname").send_keys(contact.first_name)
-        wd.find_element_by_name("middlename").send_keys(contact.middle_name)
-        wd.find_element_by_name("lastname").send_keys(contact.last_name)
-        wd.find_element_by_name("nickname").send_keys(contact.nickname)
-        self.attach(contact.file_name)
-        wd.find_element_by_name("title").send_keys(contact.title)
-        wd.find_element_by_name("company").send_keys(contact.company)
-        wd.find_element_by_name("address").send_keys(contact.address)
-        wd.find_element_by_name("home").send_keys(contact.home_phone)
-        wd.find_element_by_name("mobile").send_keys(contact.mobile_phone)
-        wd.find_element_by_name("work").send_keys(contact.work_phone)
-        wd.find_element_by_name("fax").send_keys(contact.fax)
-        wd.find_element_by_name("email").send_keys(contact.email)
-        wd.find_element_by_name("email2").send_keys(contact.email2)
-        wd.find_element_by_name("email3").send_keys(contact.email3)
-        wd.find_element_by_name("homepage").send_keys(contact.homepage)
-        self.fill_date(contact.bdate, day_locator="bday", month_locator="bmonth", year_locator="byear")
-        self.fill_date(contact.adate, day_locator="aday", month_locator="amonth", year_locator="ayear")
-        wd.find_element_by_name("address2").send_keys(contact.address2)
-        wd.find_element_by_name("phone2").send_keys(contact.home_phone2)
-        wd.find_element_by_name("notes").send_keys(contact.notes)
-        # submit contact creation
+        self.fill_contact_form(contact)
         wd.find_element_by_name("submit").click()
         self.return_home_page()
 
+    def fill_contact_form(self, contact):
+        self.app.type("firstname", contact.first_name)
+        self.app.type("middlename", contact.middle_name)
+        self.app.type("lastname", contact.last_name)
+        self.app.type("nickname", contact.nickname)
+        self.attach(contact.file_name)
+        self.app.type("title", contact.title)
+        self.app.type("company", contact.company)
+        self.app.type("address", contact.address)
+        self.app.type("home", contact.home_phone)
+        self.app.type("mobile", contact.mobile_phone)
+        self.app.type("work", contact.work_phone)
+        self.app.type("fax", contact.fax)
+        self.app.type("email", contact.email)
+        self.app.type("email2", contact.email2)
+        self.app.type("email3", contact.email3)
+        self.app.type("homepage", contact.homepage)
+        self.fill_date(contact.bdate, day_locator="bday", month_locator="bmonth", year_locator="byear")
+        self.fill_date(contact.adate, day_locator="aday", month_locator="amonth", year_locator="ayear")
+        self.app.type("address2", contact.address2)
+        self.app.type("phone2", contact.home_phone2)
+        self.app.type("notes", contact.notes)
+
     def fill_date(self, date, day_locator, month_locator, year_locator):
-        self.select(day_locator, date.day)
-        self.select(month_locator, date.month)
-        self.app.wd.find_element_by_name(year_locator).send_keys(date.year)
+        self.select_day(day_locator, date.day)
+        self.select_month(month_locator, date.month)
+        self.app.type(year_locator, date.year)
 
     def attach(self, file_name):
-        path = os.getcwd() + "\\addressbook_web_tests\\resources\\" + file_name
+        path = ROOT_DIR + "\\addressbook_web_tests\\resources\\" + file_name
         if Path(path).is_file():
             self.app.wd.find_element_by_name("photo").send_keys(path)
 
-    def select(self, locator, value):
+    def select_day(self, locator, value):
+        wd = self.app.wd
+        if value:
+            existing_value = wd.find_element_by_xpath("//select[@name='" + locator + "']/option[@selected='selected']")\
+                .get_attribute("value")
+            if value != existing_value:
+                wd.find_element_by_name(locator).click()
+                Select(wd.find_element_by_name(locator)).select_by_visible_text(value)
+
+    def select_month(self, locator, value):
         wd = self.app.wd
         if value:
             wd.find_element_by_name(locator).click()
@@ -63,3 +72,10 @@ class ContactHelper:
         wd.find_element_by_name("selected[]").click()
         wd.find_element_by_xpath("//input[@value='Delete']").click()
         self.app.wd.switch_to_alert().accept()
+
+    def modify_first(self, contact):
+        wd = self.app.wd
+        wd.find_element_by_xpath("//img[@title='Edit']").click()
+        self.fill_contact_form(contact)
+        wd.find_element_by_name("update").click()
+        self.return_home_page()
