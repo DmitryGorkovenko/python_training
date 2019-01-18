@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from addressbook_web_tests.test.application import Application
+from addressbook_web_tests.fixture.application import Application
 from addressbook_web_tests.model.group import Group
 import pytest
 
