@@ -1,3 +1,6 @@
+# -*- coding: utf-8 -*-
+
+
 class Date:
 
     def __init__(self, day, month, year):

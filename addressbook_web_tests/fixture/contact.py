@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from selenium.webdriver.support.ui import Select
 from pathlib import Path
 import os
@@ -39,16 +40,14 @@ class ContactHelper:
         self.return_home_page()
 
     def fill_date(self, date, day_locator, month_locator, year_locator):
-        wd = self.app.wd
         self.select(day_locator, date.day)
         self.select(month_locator, date.month)
-        wd.find_element_by_name(year_locator).send_keys(date.year)
+        self.app.wd.find_element_by_name(year_locator).send_keys(date.year)
 
     def attach(self, file_name):
-        wd = self.app.wd
         path = os.getcwd() + "\\addressbook_web_tests\\resources\\" + file_name
         if Path(path).is_file():
-            wd.find_element_by_name("photo").send_keys(path)
+            self.app.wd.find_element_by_name("photo").send_keys(path)
 
     def select(self, locator, value):
         wd = self.app.wd
@@ -57,5 +56,4 @@ class ContactHelper:
             Select(wd.find_element_by_name(locator)).select_by_visible_text(value)
 
     def return_home_page(self):
-        wd = self.app.wd
-        wd.find_element_by_link_text("home page").click()
+        self.app.wd.find_element_by_link_text("home page").click()

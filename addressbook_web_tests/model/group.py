@@ -1,3 +1,6 @@
+# -*- coding: utf-8 -*-
+
+
 class Group:
 
     def __init__(self, name, header, footer):
