@@ -1,7 +1,8 @@
 # -*- coding: utf-8 -*-
-from selenium.webdriver.support.ui import Select
-from definitions import ROOT_DIR
 from pathlib import Path
+from selenium.webdriver.support.ui import Select
+
+from definitions import ROOT_DIR
 
 
 class ContactHelper:
@@ -17,27 +18,15 @@ class ContactHelper:
         self.return_home_page()
 
     def fill_contact_form(self, contact):
-        self.app.type("firstname", contact.first_name)
-        self.app.type("middlename", contact.middle_name)
-        self.app.type("lastname", contact.last_name)
-        self.app.type("nickname", contact.nickname)
+        fields_map = {
+            'firstname': 'first_name',
+            ...
+        }
+        for k, v in fields_map.items():
+            self.app.type(k, getattr(contact, v))
         self.attach(contact.file_name)
-        self.app.type("title", contact.title)
-        self.app.type("company", contact.company)
-        self.app.type("address", contact.address)
-        self.app.type("home", contact.home_phone)
-        self.app.type("mobile", contact.mobile_phone)
-        self.app.type("work", contact.work_phone)
-        self.app.type("fax", contact.fax)
-        self.app.type("email", contact.email)
-        self.app.type("email2", contact.email2)
-        self.app.type("email3", contact.email3)
-        self.app.type("homepage", contact.homepage)
         self.fill_date(contact.bdate, day_locator="bday", month_locator="bmonth", year_locator="byear")
         self.fill_date(contact.adate, day_locator="aday", month_locator="amonth", year_locator="ayear")
-        self.app.type("address2", contact.address2)
-        self.app.type("phone2", contact.home_phone2)
-        self.app.type("notes", contact.notes)
 
     def fill_date(self, date, day_locator, month_locator, year_locator):
         self.select_day(day_locator, date.day)
@@ -45,14 +34,14 @@ class ContactHelper:
         self.app.type(year_locator, date.year)
 
     def attach(self, file_name):
-        path = ROOT_DIR + "\\addressbook_web_tests\\resources\\" + file_name
+        path = "{}\\addressbook_web_tests\\resources\\{}".format(ROOT_DIR, file_name)
         if Path(path).is_file():
             self.app.wd.find_element_by_name("photo").send_keys(path)
 
     def select_day(self, locator, value):
         wd = self.app.wd
         if value:
-            existing_value = wd.find_element_by_xpath("//select[@name='" + locator + "']/option[@selected='selected']")\
+            existing_value = wd.find_element_by_xpath("//select[@name='{}']/option[@selected='selected']".format(locator))\
                 .get_attribute("value")
             if not value == existing_value:
                 wd.find_element_by_name(locator).click()

@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
-from addressbook_web_tests.fixture.application import Application
 import pytest
+
+from addressbook_web_tests.fixture.application import Application
 
 
 @pytest.fixture(scope="session")

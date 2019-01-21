@@ -15,15 +15,14 @@ class Application:
         self.contact = ContactHelper(self)
 
     def open_home_page(self):
+        # Перенести в параметры
         self.wd.get("http://localhost:8080/addressbook/")
 
     def type(self, locator, text):
         wd = self.wd
-        if text:
-            existing_text = wd.find_element_by_name(locator).get_attribute("value")
-            if not text == existing_text:
-                wd.find_element_by_name(locator).clear()
-                wd.find_element_by_name(locator).send_keys(text)
+        if text and not text == wd.find_element_by_name(locator).get_attribute("value"):
+            wd.find_element_by_name(locator).clear()
+            wd.find_element_by_name(locator).send_keys(text)
 
     def destroy(self):
         self.wd.quit()

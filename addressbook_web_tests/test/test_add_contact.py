@@ -2,22 +2,24 @@
 from addressbook_web_tests.model.contact import Contact
 from addressbook_web_tests.model.date import Date
 
+fields = ('first_name', 'middle_name', ...)
+
 
 def test_add_contact(app):
-    app.session.login(username="admin", password="secret")
-    app.contact.create(Contact(first_name="abc", middle_name="abc", last_name="abc", nickname="abc",
-                               title="abc", company="abc", address="abc", home_phone="abc", mobile_phone="abc",
-                               work_phone="abc", fax="abc", email="abc", email2="abc", email3="abc",
-                               homepage="abc", bdate=Date("1", "January", "1990"),
-                               adate=Date("10", "May", "1999"), address2="abc", home_phone2="abc",
-                               notes="abc", file_name="photo.jpg"))
+    app.session.login(username='admin', password='secret')
+    data = {field_name: 'abc' for field_name in fields}
+    app.contact.create(Contact(
+        bdate=Date('1', 'January', '1990'), adate=Date('10', 'May', '1999'), file_name='photo.jpg',
+        **data
+    ))
     app.session.logout()
 
 
 def test_add_empty_contact(app):
-    app.session.login(username="admin", password="secret")
-    app.contact.create(Contact(first_name="", middle_name="", last_name="", nickname="", title="", company="",
-                               address="", home_phone="", mobile_phone="", work_phone="", fax="", email="",
-                               email2="", email3="", homepage="", bdate=Date(None, None, ""),
-                               adate=Date(None, None, ""), address2="", home_phone2="", notes="", file_name=""))
+    app.session.login(username='admin', password='secret')
+    data = {field_name: '' for field_name in fields}
+    app.contact.create(Contact(
+        bdate=Date(None, None, ''), adate=Date(None, None, ''),
+        **data,
+    ))
     app.session.logout()
